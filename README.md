@@ -128,8 +128,85 @@ Mecanismos Pull e Híbridos:
 
 # Instalación Clúster en Local
 
+Extraer el fichero
+
+    $ tar xvf kafka_version.tgz
+    $ cd kafka_version/
+
+Ejecutar Zookeeper
+
+    $ cd bin/
+    $ ./zookeeper-server-start.sh ../config/zookeeper.properties
+
+Ejecutar dentro de la carpeta bin
+
+    $ ./kafka-server-start.sh ../config/server.properties
 
 Crear nuevos directorios
 
+    $ cd ../config
     $ cp server.properties server-1.properties
     $ cp server.properties server-2.properties
+
+Cambiar el ID del broker, debe ser siempre único.
+
+![The problem](pictures/server-config-change.PNG)
+
+Descomentar la parte de listeners y cambiar el puerto para evitar errores al ejecutar en local.
+
+![The problem](pictures/server-config-change-2.PNG)
+
+
+Cambiar la carpeta destino del LOG para que sea único en cada broker.
+
+![The problem](pictures/server-config-change-3.PNG)
+
+    $ cd ../
+    $ bin/kafka-server-start.sh config/server-1.properties
+
+Para visualizar que estén los brokers de Kafka en ejecución, poner la siguiente instrucción en consola.
+
+    $ jps
+
+![The problem](pictures/jps-console.PNG)
+
+Crea un topic de Kafka con factor de replicación de 3 y dos particiones.
+
+    $ ./bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 2 --topic testtopic
+
+Visualiza detalles de un topic.
+
+    $ ./bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic testtopic
+
+Lista los topics
+
+    $ ./bin/kafka-topics.sh --list --zookeeper localhost:2181
+
+
+## Brokers
+
+* Es un nodo de Apache Kafka.
+* Se comunica con los demás brokers.
+* Se sincromiza mediante Apache Zookeeper.
+
+## Replicación
+
+* Es una copia de una partición en otro Broker.
+* Permite:
+    * Tolerancia a fallos.
+    * Evitar pérdidas de datos.
+* Para cada partición tiene 1 o más réplicas.
+* **Líder**. Procesa peticiones.
+* **Seguidor**. Replica al lider.
+* **ISR**. Réplica sincronizada.
+
+Diagrama de ejemplo.
+
+![The problem](pictures/replicacion.PNG)
+
+
+Ejemplo en consola.
+
+![The problem](pictures/replica-2.PNG)
+
+
